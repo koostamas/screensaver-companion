@@ -1,8 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from subprocess import check_output
 import pyuac
+import pywinauto
 from infi.systray import SysTrayIcon
-import win32gui
 
 import sys
 sys.stdout = open('stdout.txt', 'w')
@@ -23,13 +23,18 @@ def checkWakeLocks(self):
     else:
         self.send_response(200)
         self.send_header("Content-type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write('{"hasWakeLocks": true}'.encode(encoding='utf_8'))
         
 def placeWindow(self):
-    hwnd = win32gui.FindWindowEx(0,0,0, "Photo Screen Saver Screensaver Page")
-    win32gui.SetForegroundWindow(hwnd)
+    app = pywinauto.application.Application().connect(best_match='Photo Screen Saver Screensaver Page')
+    app.top_window().set_focus()
     self.send_response(200)
+    self.send_header("Content-type", "application/json")
+    self.send_header("Access-Control-Allow-Origin", "*")
+    self.end_headers()
+    self.wfile.write('{"status": "OK"}'.encode(encoding='utf_8'))
 
 class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
