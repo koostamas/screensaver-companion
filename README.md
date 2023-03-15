@@ -12,8 +12,8 @@ A Companion app for the [Screensaver Chrome Extension](https://github.com/koosta
 3. On the Settings tab, check Run with highest privileges
 4. On the Triggers tab, add a trigger for any user at log on
 5. On the actions tab, add a new Action to start a program
-  1. The program should be the path to the `pythonw` (mind the w, to run the script without console) executable on your system
-  2. The arguments should be `server.py`
-  3. Start in should be the path to the cloned repository on your system
+    1. The program should be the path to the `pythonw` (mind the w, to run the script without console) executable on your system
+    2. The arguments should be `server.py`
+    3. Start in should be the path to the cloned repository on your system
 6. Done, this task will run the server every time you log into your computer
 
