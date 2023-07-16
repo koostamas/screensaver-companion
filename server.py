@@ -12,9 +12,12 @@ hostName = "localhost"
 serverPort = 32123
 webServer = None
 
+paused = False
+
 def checkWakeLocks(self):
     result = check_output("powercfg requests", shell=True).decode()[10:15]
-    if result == "None.":
+    global paused
+    if result == "None." and paused == False:
         self.send_response(200)
         self.send_header("Content-type", "application/json")
         self.send_header("Access-Control-Allow-Origin", "*")
@@ -43,11 +46,23 @@ class MyServer(BaseHTTPRequestHandler):
         elif self.path == "/place-window":
             placeWindow(self)
             
+def pause(sysTrayIcon):
+    global paused
+    paused = True
+    sysTrayIcon.update(icon='screensaver_paused.ico')
+    
+    
+def resume(sysTrayIcon):
+    global paused
+    paused = False
+    sysTrayIcon.update(icon='screensaver.ico')
+            
 def onQuit(systray):
     webServer.server_close()
 
 def main():
-    with SysTrayIcon("screensaver.ico", "Screensaver Companion", on_quit=onQuit) as systray:
+    menu_options = (('Pause', None, pause), ('Resume', None, resume))
+    with SysTrayIcon("screensaver.ico", "Screensaver Companion", menu_options, on_quit=onQuit) as systray:
         global webServer
         webServer = HTTPServer((hostName, serverPort), MyServer)
         # print("Server started http://%s:%s" % (hostName, serverPort))
